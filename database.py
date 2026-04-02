@@ -1,14 +1,12 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from config import settings
 
 
-engine = create_async_engine(
-    'sqlite+aiosqlite:///tasks.db'
+sync_engine = create_engine(
+    settings.DATABASE_URL,
+    echo=True,
 )
 
-session = async_sessionmaker(engine, expire_on_commit=False)
-
-
-
-
-Class TaskOrm():
-    pass
+session_base = sessionmaker(sync_engine)
