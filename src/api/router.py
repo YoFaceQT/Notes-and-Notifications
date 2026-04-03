@@ -1,9 +1,9 @@
-from fastapi import HTTPException
 from typing import List
-from fastapi import APIRouter
-from schemas import TaskCreate, TaskUpdate, TaskSchema
-from repository import TaskRepository
 
+from fastapi import APIRouter, HTTPException
+
+from src.api.repository import TaskRepository
+from src.schemas.schemas import TaskCreate, TaskUpdate, TaskSchema
 
 router = APIRouter(prefix='/tasks')
 

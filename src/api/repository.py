@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import text, insert, select
+from sqlalchemy import select
 
 from database import sync_engine, session_base
-from models import Base, NotesOrm, NotificationStatus
-from schemas import TaskCreate, TaskSchema
+from src.models.models import Base, NotesOrm, NotificationStatus
+from src.schemas.schemas import TaskCreate, TaskSchema
 
 
 class TaskRepository:
@@ -24,7 +24,9 @@ class TaskRepository:
         with session_base() as session:
             task_dict = data.model_dump()
             if data.remind_after_minutes is not None:
-                reminder_time = datetime.now() + timedelta(minutes=data.remind_after_minutes)
+                reminder_time = datetime.now() + timedelta(
+                    minutes=data.remind_after_minutes
+                )
                 task_dict['reminder_at'] = reminder_time
             new_note = NotesOrm(**task_dict)
             session.add(new_note)

@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from schemas import TaskCreate
-from repository import TaskRepository
-from router import router
-from telegram_bot import bot_load
+from src.schemas.schemas import TaskCreate
+from src.api.repository import TaskRepository
+from src.api.router import router
+from src.telegram_bot.telegram_bot import bot_load
 
 
 async def lifespan(app: FastAPI):

@@ -10,7 +10,7 @@ from telebot import TeleBot
 import threading
 
 from database import session_base
-from models import NotesOrm, NotificationStatus
+from src.models.models import NotesOrm, NotificationStatus
 
 
 load_dotenv()

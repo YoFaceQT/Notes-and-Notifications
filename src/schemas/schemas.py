@@ -16,7 +16,7 @@ from pydantic import (
 )
 
 from constants import DESCRIPTION_MAX_LENGHT, NAME_MAX_LENGHT, NAME_MIN_LENGHT
-from models import NotificationStatus
+from src.models.models import NotificationStatus
 
 
 class TaskBase(BaseModel):
