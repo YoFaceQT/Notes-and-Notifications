@@ -29,6 +29,9 @@ class NotesOrm(Base):
         server_default=text("TIMEZONE('utc', now())")
     )
     remind_after_minutes: Mapped[int | None] = mapped_column(nullable=True)
+    reminder_at: Mapped[datetime | None] = mapped_column(
+        DateTime, nullable=True
+    )
     status: Mapped[NotificationStatus] = mapped_column(
         Enum(NotificationStatus),
         default=NotificationStatus.NO_TIMER,

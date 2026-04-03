@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from schemas import TaskCreate
 from repository import TaskRepository
 from router import router
+from telegram_bot import bot_load
 
 
-def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):
     TaskRepository.delete_tables()
     print('Таблицы удалены')
     TaskRepository.create_tables()
@@ -20,18 +21,17 @@ def lifespan(app: FastAPI):
         TaskCreate(
             name='ПРОВЕРКА СОЗДАНИЯ ЗАМЕТКИ С ТАЙМЕРОМ',
             description='ПРОВЕРКА',
-            remind_after_minutes=30
+            remind_after_minutes=1
          )
         )
     TaskRepository.update_note(
         note_id=1,
         name='Проверка редактирования заметки',
         description='ПРОВЕРКА',
-        remind_after_minutes=None
+        remind_after_minutes=30
     )
+    await bot_load()
     yield
-    print('Выключение')
-
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)

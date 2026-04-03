@@ -7,7 +7,14 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator
+)
+
 from constants import DESCRIPTION_MAX_LENGHT, NAME_MAX_LENGHT, NAME_MIN_LENGHT
 from models import NotificationStatus
 
@@ -68,6 +75,10 @@ class TaskSchema(TaskBase):
 
 
 class TaskUpdate(BaseModel, CommonValidatorsMixin):
-    name: Optional[str] = Field(None, min_length=NAME_MIN_LENGHT, max_length=NAME_MAX_LENGHT)
+    name: Optional[str] = Field(
+        None,
+        min_length=NAME_MIN_LENGHT,
+        max_length=NAME_MAX_LENGHT
+    )
     description: Optional[str] = Field(None, max_length=DESCRIPTION_MAX_LENGHT)
     remind_after_minutes: Optional[int] = Field(None, ge=1)
