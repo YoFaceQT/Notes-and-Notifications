@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 import enum
 
-from sqlalchemy import Enum, func, DateTime, MetaData, text
+from sqlalchemy import Enum, func, DateTime, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
