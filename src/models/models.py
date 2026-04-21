@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 from sqlalchemy import Enum, func, DateTime, MetaData, text
@@ -7,36 +7,39 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 metadata_obj = MetaData()
 
-
 class Base(DeclarativeBase):
     pass
 
 
 class NotificationStatus(enum.Enum):
-    NO_TIMER = 'no_timer'
-    IN_PROGRESS = 'in_progress'
-    FAILED_TO_SEND = 'Failed_to_send'
+    NO_TIMER = 'NO_TIMER'
+    IN_PROGRESS = 'IN_PROGRESS'
+    FAILED_TO_SEND = 'FAILED_TO_SEND'
+    SUCCESSFULLY_SENT = 'SUCCESSFULLY_SENT' 
 
+
+def _utc_now():
+    return datetime.now(timezone.utc)
 
 class NotesOrm(Base):
     __tablename__ = 'notes'
-
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
     description: Mapped[str | None] = mapped_column(nullable=True)
-    time_stamp: Mapped[datetime] = mapped_column(
-        DateTime,
-        server_default=text("TIMEZONE('utc', now())")
-    )
     remind_after_minutes: Mapped[int | None] = mapped_column(nullable=True)
-    reminder_at: Mapped[datetime | None] = mapped_column(
-        DateTime, nullable=True
-    )
     status: Mapped[NotificationStatus] = mapped_column(
         Enum(NotificationStatus),
         default=NotificationStatus.NO_TIMER,
         nullable=False
     )
+    time_stamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=_utc_now
+    )
+    reminder_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+        )
 
     def __str__(self):
         return (

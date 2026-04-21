@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select
 
@@ -20,11 +20,10 @@ class TaskRepository:
 
     @classmethod
     def create_note(cls, data: TaskCreate) -> int:
-        """Создаёт новую заметку с возможностью установки напоминания."""
         with session_base() as session:
             task_dict = data.model_dump()
             if data.remind_after_minutes is not None:
-                reminder_time = datetime.now() + timedelta(
+                reminder_time = datetime.now(timezone.utc) + timedelta(
                     minutes=data.remind_after_minutes
                 )
                 task_dict['reminder_at'] = reminder_time
@@ -34,21 +33,7 @@ class TaskRepository:
             return new_note.id
 
     @classmethod
-    def get_note(cls, note_id):
-        with session_base() as session:
-            note = session.get(NotesOrm, note_id)
-            if not note:
-                raise ValueError(f"Заметка с id={note_id} не найдена")
-            return note
-
-    @classmethod
-    def update_note(
-        cls,
-        note_id,
-        name=None,
-        description=None,
-        remind_after_minutes=None
-    ):
+    def update_note(cls, note_id, name=None, description=None, remind_after_minutes=None):
         with session_base() as session:
             note = session.get(NotesOrm, note_id)
             if not note:
@@ -59,9 +44,11 @@ class TaskRepository:
                 note.description = description
             if remind_after_minutes is not None:
                 note.remind_after_minutes = remind_after_minutes
+                note.reminder_at = datetime.now(timezone.utc) + timedelta(minutes=remind_after_minutes)
                 note.status = NotificationStatus.IN_PROGRESS
             else:
                 note.remind_after_minutes = None
+                note.reminder_at = None
                 note.status = NotificationStatus.NO_TIMER
             session.add(note)
             session.commit()

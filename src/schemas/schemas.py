@@ -4,7 +4,7 @@
 Содержит модель Task с валидацией полей и преобразованием типов.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from pydantic import (
@@ -12,7 +12,8 @@ from pydantic import (
     ConfigDict,
     Field,
     field_validator,
-    model_validator
+    model_validator,
+    computed_field
 )
 
 from constants import DESCRIPTION_MAX_LENGHT, NAME_MAX_LENGHT, NAME_MIN_LENGHT
@@ -70,8 +71,19 @@ class TaskSchema(TaskBase):
     id: int
     time_stamp: datetime = Field(default_factory=datetime.now)
     reminded: bool = Field(default=False)
+    status: NotificationStatus
 
     model_config = ConfigDict(from_attributes=True)
+
+    @computed_field
+    @property
+    def reminder_at(self) -> Optional[datetime]:
+        if self.remind_after_minutes is not None:
+            ts = self.time_stamp
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            return ts + timedelta(minutes=self.remind_after_minutes)
+        return None
 
 
 class TaskUpdate(BaseModel, CommonValidatorsMixin):

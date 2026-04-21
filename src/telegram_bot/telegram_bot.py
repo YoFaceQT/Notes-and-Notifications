@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 import os
 
@@ -67,9 +67,12 @@ def send_message(bot, message):
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug('Сообщение успешно отправлено в Telegram')
+        return True
     except (telebot.apihelper.ApiException,
             requests.RequestException) as error:
         logging.error(f'Ошибка при отправке сообщения в Telegram: {error}')
+        return False
+
 
 
 def check_and_notify(bot):
@@ -77,19 +80,26 @@ def check_and_notify(bot):
     (IN_PROGRESS).
     """
     with session_base() as session:
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         notes_to_notify = session.query(NotesOrm).filter(
             NotesOrm.reminder_at <= now,
             NotesOrm.status == NotificationStatus.IN_PROGRESS
         ).all()
 
         for note in notes_to_notify:
-            message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name} "
-                       f"Описание: {note.description}")
-            send_message(bot, message)
-
-            note.status = NotificationStatus.NO_TIMER
-            session.add(note)
+            if not note.description:
+                message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name}")
+            else:
+                message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name} "
+                        f"Описание: {note.description}")
+            if send_message(bot, message):
+                note.status = NotificationStatus.SUCCESSFULLY_SENT
+                note.reminder_at = None
+                note.remind_after_minutes = None
+                session.add(note)
+            else:
+                note.status = NotificationStatus.FAILED_TO_SEND
+                session.add(note)
         session.commit()
 
 
