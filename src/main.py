@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
         description='ПРОВЕРКА',
         remind_after_minutes=30
     )
-    #await bot_load()
+    await bot_load()
     yield
 
 app = FastAPI(lifespan=lifespan)

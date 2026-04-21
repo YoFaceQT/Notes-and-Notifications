@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta, timezone
-
 from sqlalchemy import select
-
 from database import sync_engine, session_base
 from src.models.models import Base, NotesOrm, NotificationStatus
 from src.schemas.schemas import TaskCreate, TaskSchema
@@ -19,7 +17,7 @@ class TaskRepository:
         Base.metadata.drop_all(sync_engine)
 
     @classmethod
-    def create_note(cls, data: TaskCreate) -> int:
+    def create_note(cls, data: TaskCreate) -> TaskSchema:
         with session_base() as session:
             task_dict = data.model_dump()
             if data.remind_after_minutes is not None:
@@ -30,29 +28,39 @@ class TaskRepository:
             new_note = NotesOrm(**task_dict)
             session.add(new_note)
             session.commit()
-            return new_note.id
+            session.refresh(new_note)
+            return TaskSchema.model_validate(new_note)
 
     @classmethod
-    def update_note(cls, note_id, name=None, description=None, remind_after_minutes=None):
+    def update_note(cls, note_id: int, **kwargs) -> TaskSchema:
         with session_base() as session:
             note = session.get(NotesOrm, note_id)
             if not note:
                 raise ValueError(f"Заметка с id={note_id} не найдена")
-            if name is not None:
-                note.name = name
-            if description is not None:
-                note.description = description
-            if remind_after_minutes is not None:
-                note.remind_after_minutes = remind_after_minutes
-                note.reminder_at = datetime.now(timezone.utc) + timedelta(minutes=remind_after_minutes)
-                note.status = NotificationStatus.IN_PROGRESS
-            else:
-                note.remind_after_minutes = None
-                note.reminder_at = None
-                note.status = NotificationStatus.NO_TIMER
+            
+            if 'name' in kwargs:
+                note.name = kwargs['name']
+            if 'description' in kwargs:
+                note.description = kwargs['description']
+            if 'remind_after_minutes' in kwargs:
+                remind = kwargs['remind_after_minutes']
+                note.remind_after_minutes = remind
+                note.reminder_at = (
+                    datetime.now(timezone.utc) + timedelta(minutes=remind)
+                    if remind
+                    else None
+                )
+                note.status = (
+                    NotificationStatus.IN_PROGRESS 
+                    if remind 
+                    else NotificationStatus.NO_TIMER
+                )
+                note.time_stamp = datetime.now(timezone.utc)
+            
             session.add(note)
             session.commit()
-            return note
+            session.refresh(note)
+            return TaskSchema.model_validate(note)
 
     @classmethod
     def show_notes(cls) -> list[TaskSchema]:
@@ -60,16 +68,13 @@ class TaskRepository:
             query = select(NotesOrm)
             result = session.execute(query)
             note_models = result.scalars().all()
-            notes_schemas = [TaskSchema.model_validate(note_model)
-                             for note_model in note_models]
-            return notes_schemas
+            return [TaskSchema.model_validate(note) for note in note_models]
 
     @classmethod
-    def delete_note(cls, note_id):
+    def delete_note(cls, note_id: int) -> None:
         with session_base() as session:
             note = session.get(NotesOrm, note_id)
             if not note:
                 raise ValueError(f"Заметка с id={note_id} не найдена")
             session.delete(note)
             session.commit()
-            return note_id

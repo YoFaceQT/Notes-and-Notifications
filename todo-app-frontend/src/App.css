@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg-main: #161310;
-  --panel: #211b15;
-  --panel-soft: #282118;
-  --line: #5c4b36;
-  --text-main: #ede0c7;
-  --text-muted: #b8a587;
-  --brand: #b98b43;
-  --brand-hover: #d6a45a;
-  --danger: #b85a4d;
-  --danger-hover: #cf6c5f;
-  --shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+  --bg-main: #000000;
+  --panel: #0c0c0c;
+  --panel-soft: #141414;
+  --line: #2a2a2a;
+  --text-main: #b0b0b0;
+  --text-muted: #6c6c6c;
+  --brand: #3a3a3a;
+  --brand-hover: #505050;
+  --danger: #9e4a3e;
+  --danger-hover: #b85a4d;
+  --shadow: 0 20px 44px rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -45,7 +45,7 @@ body {
 .panel {
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: linear-gradient(180deg, #251f18 0%, var(--panel) 100%);
+  background: linear-gradient(180deg, #121212 0%, var(--panel) 100%);
   box-shadow: var(--shadow);
   animation: rise-in 420ms ease both;
 }
@@ -67,6 +67,7 @@ body {
   font-size: clamp(1.85rem, 2.8vw, 2.45rem);
   line-height: 1.08;
   letter-spacing: 0.03em;
+  color: #d4d4d4;
 }
 
 .view-switcher {
@@ -74,7 +75,7 @@ body {
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: #18130f;
+  background: #050505;
 }
 
 .switch-btn {
@@ -93,8 +94,8 @@ body {
 }
 
 .switch-btn.active {
-  background: #2f261b;
-  color: var(--text-main);
+  background: #222;
+  color: #ffffff;
 }
 
 .panel {
@@ -103,16 +104,16 @@ body {
 
 .input-row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto auto;
   gap: 10px;
+  align-items: start;
 }
 
-/* Стиль для поля ввода минут (таймера) */
 .timer-input {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #18130f;
+  background: #050505;
   font-size: 1rem;
   padding: 12px 14px;
   color: var(--text-main);
@@ -120,16 +121,16 @@ body {
 }
 
 .timer-input::placeholder {
-  color: #8f7e65;
+  color: #4a4a4a;
 }
 
 .timer-input:focus {
   outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(185, 139, 67, 0.2);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
-/* Убираем стандартные стрелки для number (опционально) */
 .timer-input::-webkit-inner-spin-button,
 .timer-input::-webkit-outer-spin-button {
   opacity: 0.5;
@@ -140,7 +141,7 @@ body {
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #18130f;
+  background: #050505;
   font-size: 1rem;
   padding: 12px 14px;
   color: var(--text-main);
@@ -148,13 +149,14 @@ body {
 }
 
 .input-row input[type='text']::placeholder {
-  color: #8f7e65;
+  color: #4a4a4a;
 }
 
 .input-row input[type='text']:focus {
   outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(185, 139, 67, 0.2);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .checkbox-row {
@@ -166,7 +168,7 @@ body {
 }
 
 .checkbox-row input {
-  accent-color: var(--brand);
+  accent-color: #ffffff;
 }
 
 .action-row {
@@ -176,18 +178,27 @@ body {
 .btn {
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #2a2219;
+  background: #111;
   color: var(--text-main);
   padding: 10px 14px;
   font-weight: 600;
   cursor: pointer;
   transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease,
     color 120ms ease;
+  white-space: nowrap;
 }
 
 .btn:hover {
-  background: #352a1d;
-  border-color: #806649;
+  background: #1e1e1e;
+  border-color: #4a4a4a;
+  color: #ffffff;
+}
+
+.btn:focus-visible {
+  outline: none;
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
 .btn:active {
@@ -195,22 +206,35 @@ body {
 }
 
 .btn-primary {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #1c150d;
+  background: #1f1f1f;
+  border-color: #3a3a3a;
+  color: #dddddd;
 }
 
 .btn-primary:hover {
-  background: var(--brand-hover);
-  border-color: var(--brand-hover);
+  background: #2c2c2c;
+  border-color: #5a5a5a;
+  color: #ffffff;
+}
+
+.btn-clear {
+  background: #111;
+  border-color: var(--line);
+  color: #cc8b7a;
+}
+
+.btn-clear:hover {
+  background: #2c1c18;
+  border-color: #cc8b7a;
+  color: #ffb7a5;
 }
 
 .btn-danger {
-  color: var(--danger);
+  color: #cc8b7a;
 }
 
 .btn-danger:hover {
-  color: #fff1ee;
+  color: #ffffff;
   background: var(--danger-hover);
   border-color: var(--danger-hover);
 }
@@ -230,6 +254,7 @@ body {
 .tasks-header h2 {
   margin: 0;
   font-size: 1.18rem;
+  color: #c0c0c0;
 }
 
 .stats {
@@ -244,8 +269,8 @@ body {
   padding: 5px 11px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  color: var(--text-muted);
-  background: #2e241a;
+  color: #aaaaaa;
+  background: #111111;
   font-size: 0.9rem;
 }
 
@@ -254,8 +279,8 @@ body {
   padding: 14px;
   border: 1px dashed var(--line);
   border-radius: 14px;
-  color: var(--text-muted);
-  background: #2a2118;
+  color: #6c6c6c;
+  background: #0a0a0a;
 }
 
 .tasks-panel ul {
@@ -263,6 +288,7 @@ body {
   margin: 12px 0 0;
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 
@@ -288,7 +314,7 @@ body {
   height: 28px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #19140f;
+  background: #0a0a0a;
   color: transparent;
   font-weight: 800;
   cursor: pointer;
@@ -299,9 +325,9 @@ body {
 }
 
 .toggle.done {
-  border-color: var(--brand);
-  color: #1a130a;
-  background: var(--brand);
+  border-color: #888888;
+  color: #cccccc;
+  background: #222222;
 }
 
 .task-content {
@@ -314,23 +340,25 @@ body {
   font-size: 1rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
+  color: #c0c0c0;
 }
 
 .task-title.done {
   text-decoration: line-through;
-  color: #8f7f66;
+  color: #5a5a5a;
 }
 
 .task-state {
-  color: var(--text-muted);
+  color: #7a7a7a;
   font-size: 0.86rem;
 }
 
 .task-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
-  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .category-mark {
@@ -338,8 +366,8 @@ body {
   height: 28px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: linear-gradient(180deg, #6c5430 0%, #44331d 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 223, 172, 0.14);
+  background: linear-gradient(180deg, #2a2a2a 0%, #111 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 @keyframes rise-in {
@@ -374,6 +402,11 @@ body {
 
   .input-row .btn {
     width: 100%;
+  }
+
+  /* На мобильных возвращаем одну колонку */
+  .tasks-panel ul {
+    grid-template-columns: 1fr;
   }
 
   .tasks-panel li {
