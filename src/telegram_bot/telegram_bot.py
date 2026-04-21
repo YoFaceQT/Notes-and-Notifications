@@ -9,7 +9,7 @@ import telebot
 from telebot import TeleBot
 import threading
 
-from database import session_base
+from core.database import session_base
 from src.models.models import NotesOrm, NotificationStatus
 
 
@@ -38,7 +38,7 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.DEBUG)
 
 
-def check_tokens():
+def check_tokens() -> None:
     """Проверяет доступность обязательных переменных окружения."""
     required_tokens = ('TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID')
 
@@ -60,7 +60,7 @@ def check_tokens():
     logging.info('Все необходимые переменные окружения Telegram бота доступны')
 
 
-def send_message(bot, message):
+def send_message(bot: TeleBot, message: str) -> bool:
     """Отправляет сообщение в Telegram-чат."""
     logging.debug('Начало отправки сообщения в Telegram')
 
@@ -74,8 +74,7 @@ def send_message(bot, message):
         return False
 
 
-
-def check_and_notify(bot):
+def check_and_notify(bot: TeleBot) -> None:
     """Проверяет, не наступило ли время уведомления для активных заметок
     (IN_PROGRESS).
     """
@@ -91,7 +90,7 @@ def check_and_notify(bot):
                 message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name}")
             else:
                 message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name} "
-                        f"Описание: {note.description}")
+                           f"Описание: {note.description}")
             if send_message(bot, message):
                 note.status = NotificationStatus.SUCCESSFULLY_SENT
                 note.reminder_at = None
@@ -103,14 +102,14 @@ def check_and_notify(bot):
         session.commit()
 
 
-async def start_scheduler(bot, interval_seconds=30):
+async def start_scheduler(bot: TeleBot, interval_seconds: int = 30) -> None:
     """Асинхронный цикл периодической проверки базы."""
     while True:
         await asyncio.to_thread(check_and_notify, bot)
         await asyncio.sleep(interval_seconds)
 
 
-def run_bot_polling(bot):
+def run_bot_polling(bot: TeleBot) -> None:
     """Запускает синхронный поллинг бота в отдельном потоке."""
     try:
         bot.infinity_polling()
@@ -118,7 +117,7 @@ def run_bot_polling(bot):
         logging.error(f"Ошибка в polling бота: {e}")
 
 
-async def bot_load():
+async def bot_load() -> None:
     """Основная логика: запуск бота и фоновой проверки базы."""
     check_tokens()
     bot = TeleBot(token=TELEGRAM_TOKEN)

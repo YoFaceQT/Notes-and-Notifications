@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
 import enum
 
-from sqlalchemy import Enum, func, DateTime, MetaData
+from sqlalchemy import Enum, DateTime, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 metadata_obj = MetaData()
+
 
 class Base(DeclarativeBase):
     pass
@@ -15,13 +16,15 @@ class NotificationStatus(enum.Enum):
     NO_TIMER = 'NO_TIMER'
     IN_PROGRESS = 'IN_PROGRESS'
     FAILED_TO_SEND = 'FAILED_TO_SEND'
-    SUCCESSFULLY_SENT = 'SUCCESSFULLY_SENT' 
+    SUCCESSFULLY_SENT = 'SUCCESSFULLY_SENT'
 
 
-def _utc_now():
+def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
+
 class NotesOrm(Base):
+    """Модель Заметки"""
     __tablename__ = 'notes'
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
@@ -41,7 +44,7 @@ class NotesOrm(Base):
         nullable=True
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"NotesOrm(id={self.id}, "
             f"name={self.name!r}, "

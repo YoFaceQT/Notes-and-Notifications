@@ -11,12 +11,15 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    field_validator,
     model_validator,
     computed_field
 )
 
-from constants import DESCRIPTION_MAX_LENGHT, NAME_MAX_LENGHT, NAME_MIN_LENGHT
+from src.models.constants import (
+    DESCRIPTION_MAX_LENGHT,
+    NAME_MAX_LENGHT,
+    NAME_MIN_LENGHT
+)
 from src.models.models import NotificationStatus
 
 
@@ -30,32 +33,7 @@ class TaskBase(BaseModel):
     remind_after_minutes: Optional[int] = Field(None, ge=1)
 
 
-class CommonValidatorsMixin:
-    """Миксин с общими валидаторами для полей name и description."""
-
-    @field_validator('name', mode='before')
-    @classmethod
-    def normalize_name(cls, v):
-        if isinstance(v, int):
-            v = str(v)
-        if isinstance(v, str):
-            v = v.strip()
-            if v == "":
-                raise ValueError('Название не может быть пустым')
-            return v
-        if v is None:
-            return v
-        raise ValueError('Название должно быть строкой или числом')
-
-    @field_validator('description', mode='before')
-    @classmethod
-    def normalize_description(cls, v):
-        if isinstance(v, (int, str, type(None))):
-            return str(v) if isinstance(v, int) else v
-        raise ValueError('Описание должно быть строкой, числом или None')
-
-
-class TaskCreate(TaskBase, CommonValidatorsMixin):
+class TaskCreate(TaskBase):
     status: NotificationStatus = Field(default=NotificationStatus.NO_TIMER)
 
     @model_validator(mode='after')
@@ -86,7 +64,7 @@ class TaskSchema(TaskBase):
         return None
 
 
-class TaskUpdate(BaseModel, CommonValidatorsMixin):
+class TaskUpdate(BaseModel):
     name: Optional[str] = Field(
         None,
         min_length=NAME_MIN_LENGHT,
