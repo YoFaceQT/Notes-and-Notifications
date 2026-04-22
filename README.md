@@ -104,7 +104,7 @@ npm start
 | DELETE | `/tasks/{id}`  | Удалить задачу            |
 
 ### Примеры запроса к API 
-Запрос
+Запрос:
 ```
 curl -X POST http://localhost:8000/tasks \
   -H "Content-Type: application/json" \
@@ -114,16 +114,17 @@ curl -X POST http://localhost:8000/tasks \
     "remind_after_minutes": 30
   }'
 ```
-Ответ
+Ответ: (JSON)
 ```
-json
-{
-  "id": 1,
-  "name": "Купить молоко",
-  "description": "Выйти до 20:00",
-  "remind_after_minutes": 30,
-  "time_stamp": "2025-04-22T12:00:00",
-  "status": "IN_PROGRESS",
-  "reminded": false
-}
+[
+  {
+    "id": 1,
+    "name": "Купить молоко",
+    "description": "Выйти до 20:00",
+    "remind_after_minutes": 30,
+    "time_stamp": "2025-04-22T12:00:00",
+    "status": "IN_PROGRESS",
+    "reminded": false
+  }
+]
 ```
