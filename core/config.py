@@ -8,8 +8,6 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
-    API_ID: int
-    API_HASH: str
     TELEGRAM_CHAT_ID: int
     TELEGRAM_TOKEN: str
 

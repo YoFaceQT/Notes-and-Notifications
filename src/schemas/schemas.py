@@ -24,6 +24,7 @@ from src.models.models import NotificationStatus
 
 
 class TaskBase(BaseModel):
+    """Базовая схема задачи с основными полями."""
     name: str = Field(
         ...,
         min_length=NAME_MIN_LENGHT,
@@ -34,6 +35,7 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
+    """Схема для создания новой задачи."""
     status: NotificationStatus = Field(default=NotificationStatus.NO_TIMER)
 
     @model_validator(mode='after')
@@ -46,6 +48,7 @@ class TaskCreate(TaskBase):
 
 
 class TaskSchema(TaskBase):
+    """Полная схема задачи, возвращаемая из БД."""
     id: int
     time_stamp: datetime = Field(default_factory=datetime.now)
     reminded: bool = Field(default=False)
