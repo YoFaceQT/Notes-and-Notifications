@@ -38,13 +38,12 @@ class TaskRepository:
             return TaskSchema.model_validate(new_note)
 
     @classmethod
-    def update_note(cls, note_id: int, **kwargs: Any) -> TaskSchema:
+    def update_note(cls, note_id: int, **kwargs: Any) -> TaskSchema | None:
         """ Обновляет существующую заметку по её id."""
         with session_base() as session:
             note = session.get(NotesOrm, note_id)
             if not note:
-                raise ValueError(f"Заметка с id={note_id} не найдена")
-
+                return None
             if 'name' in kwargs:
                 note.name = kwargs['name']
             if 'description' in kwargs:
