@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select
 
-from core.database import sync_engine, session_base
+from src.core.database import sync_engine, session_base
 from src.models.models import Base, NotesOrm, NotificationStatus
 from src.schemas.schemas import TaskCreate, TaskSchema
 

@@ -9,7 +9,7 @@ import telebot
 from telebot import TeleBot
 import threading
 
-from core.database import session_base
+from src.core.database import session_base
 from src.models.models import NotesOrm, NotificationStatus
 
 
