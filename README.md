@@ -52,20 +52,7 @@ src/
 git clone git@github.com:YoFaceQT/Notes-and-Notifications.git
 ```
 
-### 2. Создать и активировать виртуальное окружение
-```bash
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-```
-
-### 3. Установить зависимости
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Настроить переменные окружения,  в корне проекта создать .env
+### 2. Настроить переменные окружения,  в корне проекта создать .env
 
 ```Создайте файл .env в корне проекта и укажите токены для бота:
 DB_HOST=localhost
@@ -77,26 +64,13 @@ TELEGRAM_TOKEN=!!!YOUR_BOT_TELEGRAMM_TOKEN!!!
 TELEGRAM_CHAT_ID=!!!YOUR_TELEGRAM_CHAT_ID!!!
 ```
 
-### 5. Запустить PostgreSQL через Docker
+### 3. Запусить Docker сбору
 ```bash
-docker run --name pg-container -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
+docker-compose up --build
 ```
 
-### 6. Запустить приложения
-Находять в корневой директории проекта:
-```bash
-uvicorn src.main:app --reload
-```
+Базовый URL FRONTEND: http://localhost:80
 Базовый URL BACKEND: http://localhost:8000
-
-
-Находясь в директории todo-app-frontend, последовательно запустить команды для фронтэнда:
-```bash
-npm install
-npm start
-```
-Базовый URL FRONTEND: http://localhost:3000
-
 Документация сгенерирована FASTAPI и находится по адресу: http://localhost:8000/docs
 
 ### 📡 API Endpoints
@@ -107,6 +81,9 @@ npm start
 | GET    | `/tasks`       | Список всех задач         |
 | PATCH  | `/tasks/{id}`  | Обновить задачу           |
 | DELETE | `/tasks/{id}`  | Удалить задачу            |
+
+### Тесты
+ "В проекте также имеются pytest-тесты. Они не включаются в сборку контейнера бэкенда и запускаются отдельно."
 
 ### Примеры запроса к API 
 Запрос:
