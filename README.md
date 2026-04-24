@@ -68,8 +68,13 @@ pip install -r requirements.txt
 ### 4. Настроить переменные окружения,  в корне проекта создать .env
 
 ```Создайте файл .env в корне проекта и укажите токены для бота:
-TELEGRAM_TOKEN=your_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_NAME=postgres
+DB_PASS=postgres
+TELEGRAM_TOKEN=!!!YOUR_BOT_TELEGRAMM_TOKEN!!!
+TELEGRAM_CHAT_ID=!!!YOUR_TELEGRAM_CHAT_ID!!!
 ```
 
 ### 5. Запустить PostgreSQL через Docker
