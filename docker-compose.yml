@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: src/Dockerfile.backend
     ports:
       - "8000:8000"
     env_file:
@@ -17,7 +17,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: todo-app-frontend/Dockerfile.frontend
     ports:
       - "80:80"
     depends_on:
