@@ -10,11 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+
     TaskRepository.delete_tables()
 
     TaskRepository.create_tables()
 
-    await bot_load()
+    #await bot_load()
     yield
 
 

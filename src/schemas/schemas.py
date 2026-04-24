@@ -48,7 +48,7 @@ class TaskCreate(TaskBase):
 
 
 class TaskSchema(TaskBase):
-    """Полная схема задачи, возвращаемая из БД."""
+    """Полная схема задачи"""
     id: int
     time_stamp: datetime = Field(default_factory=datetime.now)
     reminded: bool = Field(default=False)
@@ -57,7 +57,6 @@ class TaskSchema(TaskBase):
     model_config = ConfigDict(from_attributes=True)
 
     @computed_field
-    @property
     def reminder_at(self) -> Optional[datetime]:
         if self.remind_after_minutes is not None:
             ts = self.time_stamp
