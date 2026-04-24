@@ -70,7 +70,9 @@ docker-compose up --build
 ```
 
 Базовый URL FRONTEND: http://localhost:80
+
 Базовый URL BACKEND: http://localhost:8000
+
 Документация сгенерирована FASTAPI и находится по адресу: http://localhost:8000/docs
 
 ### 📡 API Endpoints
