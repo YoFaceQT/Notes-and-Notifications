@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 import enum
 
-from sqlalchemy import Enum, DateTime, MetaData
+from sqlalchemy import DateTime, Enum, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -19,7 +19,7 @@ class NotificationStatus(enum.Enum):
     SUCCESSFULLY_SENT = 'SUCCESSFULLY_SENT'
 
 
-def _utc_now() -> datetime:
+def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -37,7 +37,7 @@ class NotesOrm(Base):
     )
     time_stamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=_utc_now
+        default=utc_now
     )
     reminder_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),

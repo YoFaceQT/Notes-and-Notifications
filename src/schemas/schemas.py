@@ -1,18 +1,12 @@
-"""
-Модуль с моделями Pydantic для управления задачами.
-
-Содержит модель Task с валидацией полей и преобразованием типов.
-"""
-
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from pydantic import (
     BaseModel,
+    computed_field,
     ConfigDict,
     Field,
-    model_validator,
-    computed_field
+    model_validator
 )
 
 from src.models.constants import (

@@ -24,13 +24,14 @@ async def get_notes() -> List[TaskSchema]:
 @router.patch('/{note_id}', status_code=status.HTTP_200_OK)
 async def update_note(note_id: int, note_update: TaskUpdate) -> TaskSchema:
     """Обновляет заметку и возвращает обновлённую запись."""
-    updated =  await TaskRepository.update_note(
+    updated = await TaskRepository.update_note(
         note_id,
         **note_update.model_dump(exclude_unset=True)
     )
     if updated is None:
         raise HTTPException(status_code=404, detail="Note not found")
     return updated
+
 
 @router.delete('/{note_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_note(note_id: int) -> None:
