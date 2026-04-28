@@ -3,28 +3,28 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select
 
-from src.core.database import sync_engine, session_base
+from src.core.database import async_engine, AsyncSessionLocal
 from src.models.models import Base, NotesOrm, NotificationStatus
 from src.schemas.schemas import TaskCreate, TaskSchema
 
 
 class TaskRepository:
     @classmethod
-    def create_tables(cls) -> None:
-        """Создаёт все таблицы в базе данных."""
-        sync_engine.echo = False
-        Base.metadata.create_all(sync_engine)
+    async def create_tables(cls) -> None:
+        """Асинхронно создаёт все таблицы в базе данных."""
+        async with async_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
 
     @classmethod
-    def delete_tables(cls) -> None:
-        """Удаляет все таблицы из базы данных."""
-        sync_engine.echo = False
-        Base.metadata.drop_all(sync_engine)
+    async def delete_tables(cls) -> None:
+        """Асинхронно удаляет все таблицы из базы данных."""
+        async with async_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
 
     @classmethod
-    def create_note(cls, data: TaskCreate) -> TaskSchema:
-        """Создаёт новую заметку в базе данных."""
-        with session_base() as session:
+    async def create_note(cls, data: TaskCreate) -> TaskSchema:
+        """Асинхронно создаёт новую заметку в базе данных."""
+        async with AsyncSessionLocal() as session:
             task_dict = data.model_dump()
             if data.remind_after_minutes is not None:
                 reminder_time = datetime.now(timezone.utc) + timedelta(
@@ -33,15 +33,19 @@ class TaskRepository:
                 task_dict['reminder_at'] = reminder_time
             new_note = NotesOrm(**task_dict)
             session.add(new_note)
-            session.commit()
-            session.refresh(new_note)
+            await session.commit()
+            await session.refresh(new_note)
             return TaskSchema.model_validate(new_note)
 
     @classmethod
-    def update_note(cls, note_id: int, **kwargs: Any) -> TaskSchema | None:
-        """ Обновляет существующую заметку по её id."""
-        with session_base() as session:
-            note = session.get(NotesOrm, note_id)
+    async def update_note(
+        cls,
+        note_id: int,
+        **kwargs: Any
+    ) -> TaskSchema | None:
+        """Асинхронно обновляет существующую заметку по её id."""
+        async with AsyncSessionLocal() as session:
+            note = await session.get(NotesOrm, note_id)
             if not note:
                 return None
             if 'name' in kwargs:
@@ -64,25 +68,25 @@ class TaskRepository:
                 note.time_stamp = datetime.now(timezone.utc)
 
             session.add(note)
-            session.commit()
-            session.refresh(note)
+            await session.commit()
+            await session.refresh(note)
             return TaskSchema.model_validate(note)
 
     @classmethod
-    def show_notes(cls) -> list[TaskSchema]:
+    async def show_notes(cls) -> list[TaskSchema]:
         """Возвращает список всех заметок из базы данных."""
-        with session_base() as session:
+        async with AsyncSessionLocal() as session:
             query = select(NotesOrm)
-            result = session.execute(query)
+            result = await session.execute(query)
             note_models = result.scalars().all()
             return [TaskSchema.model_validate(note) for note in note_models]
 
     @classmethod
-    def delete_note(cls, note_id: int) -> None:
-        """Удаляет заметку по её id."""
-        with session_base() as session:
-            note = session.get(NotesOrm, note_id)
+    async def delete_note(cls, note_id: int) -> None:
+        """Асинхронно удаляет заметку по её id."""
+        async with AsyncSessionLocal() as session:
+            note = await session.get(NotesOrm, note_id)
             if not note:
                 raise ValueError(f"Заметка с id={note_id} не найдена")
-            session.delete(note)
-            session.commit()
+            await session.delete(note)
+            await session.commit()

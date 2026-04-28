@@ -10,21 +10,21 @@ router = APIRouter(prefix='/tasks')
 
 
 @router.post('', status_code=status.HTTP_201_CREATED)
-def add_note(note: TaskCreate) -> TaskSchema:
+async def add_note(note: TaskCreate) -> TaskSchema:
     """Создаёт заметку и возвращает созданную запись."""
-    return TaskRepository.create_note(note)
+    return await TaskRepository.create_note(note)
 
 
 @router.get('')
-def get_notes() -> List[TaskSchema]:
+async def get_notes() -> List[TaskSchema]:
     """Возвращает список всех заметок."""
-    return TaskRepository.show_notes()
+    return await TaskRepository.show_notes()
 
 
 @router.patch('/{note_id}', status_code=status.HTTP_200_OK)
-def update_note(note_id: int, note_update: TaskUpdate) -> TaskSchema:
+async def update_note(note_id: int, note_update: TaskUpdate) -> TaskSchema:
     """Обновляет заметку и возвращает обновлённую запись."""
-    updated = TaskRepository.update_note(
+    updated =  await TaskRepository.update_note(
         note_id,
         **note_update.model_dump(exclude_unset=True)
     )
@@ -32,11 +32,10 @@ def update_note(note_id: int, note_update: TaskUpdate) -> TaskSchema:
         raise HTTPException(status_code=404, detail="Note not found")
     return updated
 
-
 @router.delete('/{note_id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_note(note_id: int) -> None:
+async def delete_note(note_id: int) -> None:
     """Удаляет заметку. Возвращает статус 204 без тела."""
     try:
-        TaskRepository.delete_note(note_id)
+        await TaskRepository.delete_note(note_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

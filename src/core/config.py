@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     def DATABASE_URL(self) -> str:
         """URL для psycopg 3."""
         return (
-            f"postgresql+psycopg://{self.DB_USER}:{self.DB_PASS}"
+            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
