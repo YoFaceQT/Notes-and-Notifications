@@ -1,22 +1,21 @@
-import asyncio
+import json
 import logging
 import sys
-import json
+
 from aiogram import Bot, Dispatcher
-from src.core.config import settings
+import asyncio
 from faststream.rabbit import RabbitBroker
+
+from src.core.config import settings
 from src.core.database import AsyncSessionLocal
-from sqlalchemy import select
-from faststream.rabbit import RabbitBroker
 from src.models.models import NotesOrm, NotificationStatus
-from src.core.config import settings
+from sqlalchemy import select
 
 
-RABBIT_URL =(
+RABBIT_URL = (
     f"amqp://{settings.RABBITMQ_USER}:{settings.RABBITMQ_PASS}@"
     f"{settings.RABBITMQ_HOST}:{settings.RABBITMQ_PORT}/"
 )
-
 
 dp = Dispatcher()
 
@@ -24,8 +23,9 @@ bot = Bot(token=settings.TELEGRAM_TOKEN)
 
 broker = RabbitBroker(RABBIT_URL)
 
+
 @broker.subscriber("messages")
-async def handle_messages_and_send_message(data: str):
+async def handle_messages_and_send_message(data: str) -> None:
     try:
         payload = json.loads(data)
         note_id = payload["note_id"]
@@ -35,7 +35,6 @@ async def handle_messages_and_send_message(data: str):
             chat_id=settings.TELEGRAM_CHAT_ID,
             text=message_text,
         )
-
 
         async with AsyncSessionLocal() as session:
             stmt = select(NotesOrm).where(NotesOrm.id == note_id)
@@ -53,6 +52,7 @@ async def handle_messages_and_send_message(data: str):
 
     except Exception as e:
         logging.error(f"Ошибка при обработке сообщения: {e}")
+
 
 async def main() -> None:
     async with broker:

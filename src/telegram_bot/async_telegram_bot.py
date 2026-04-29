@@ -1,10 +1,9 @@
-import asyncio
 from datetime import datetime, timezone
-import logging
-import os
 import json
+import logging
+
 from aiogram import Bot, Dispatcher
-from dotenv import load_dotenv
+import asyncio
 from sqlalchemy import select
 
 from src.core.config import settings
@@ -12,13 +11,11 @@ from src.core.database import AsyncSessionLocal
 from src.models.models import NotesOrm, NotificationStatus
 from src.broker.broker import broker
 
-load_dotenv()
 
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+TELEGRAM_CHAT_ID = settings.TELEGRAM_CHAT_ID
+TELEGRAM_TOKEN = settings.TELEGRAM_TOKEN
 
 logging.basicConfig(level=logging.INFO)
-
 
 bot = Bot(token=settings.TELEGRAM_TOKEN)
 
@@ -87,7 +84,6 @@ async def check_and_notify(bot: Bot) -> None:
                 note.status = NotificationStatus.FAILED_TO_SEND
                 session.add(note)
         await session.commit()
-
 
 
 async def start_scheduler(bot: Bot, interval_seconds: int = 30) -> None:
