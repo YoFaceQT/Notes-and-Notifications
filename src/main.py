@@ -3,21 +3,26 @@ from contextlib import asynccontextmanager
 import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+import logging
 from src.api.repository import TaskRepository
 from src.api.router import router
 from src.telegram_bot.async_telegram_bot import bot_load
+from src.broker.broker import broker
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await TaskRepository.delete_tables()
     await TaskRepository.create_tables()
+    await broker.start()
+
+    logging.info("Брокер запущен")
 
     bot_task = asyncio.create_task(bot_load())
     yield
     bot_task.cancel()
     await asyncio.gather(bot_task, return_exceptions=True)
+    await broker.stop()
 
 
 app = FastAPI(lifespan=lifespan)

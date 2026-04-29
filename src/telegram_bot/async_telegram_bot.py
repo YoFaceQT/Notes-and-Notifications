@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime, timezone
 import logging
 import os
-
+import json
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 from sqlalchemy import select
@@ -10,7 +10,7 @@ from sqlalchemy import select
 from src.core.config import settings
 from src.core.database import AsyncSessionLocal
 from src.models.models import NotesOrm, NotificationStatus
-
+from src.broker.broker import broker
 
 load_dotenv()
 
@@ -47,47 +47,39 @@ def check_tokens() -> None:
     logging.info('Все необходимые переменные окружения Telegram бота доступны')
 
 
-async def send_message_aiogram(
-        bot: Bot,
-        TELEGRAM_CHAT_ID: int,
-        message: str
-        ) -> bool:
-    """Отправляет сообщение в Telegram-чат."""
-    logging.debug('Начало отправки сообщения в Telegram')
+async def send_message_via_broker(note_id: int, message: str) -> bool:
+    """Публикует JSON с id заметки и текстом в очередь 'messages'."""
     try:
-        await bot.send_message(TELEGRAM_CHAT_ID, message)
+        payload = json.dumps({
+            "note_id": note_id,
+            "message": message
+        })
+        await broker.publish(payload, queue="messages")
+        logging.debug(f"Опубликовано для заметки {note_id}: {message[:50]}...")
         return True
-    except Exception as error:
-        logging.error(f'Ошибка при отправке сообщения в Telegram: {error}')
+    except Exception as e:
+        logging.error(f"Ошибка публикации в брокер: {e}")
         return False
 
 
 async def check_and_notify(bot: Bot) -> None:
-    """Проверяет, не наступило ли время уведомления для активных заметок
-    (IN_PROGRESS).
-    """
     async with AsyncSessionLocal() as session:
         now = datetime.now(timezone.utc)
         stmt = select(NotesOrm).where(
             NotesOrm.reminder_at <= now,
             NotesOrm.status == NotificationStatus.IN_PROGRESS
         )
-
         result = await session.execute(stmt)
         notes_to_notify = result.scalars().all()
 
         for note in notes_to_notify:
-            if not note.description:
-                message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name}")
-            else:
-                message = (f"[УВЕДОМЛЕНИЕ] Пора заняться заметкой:{note.name} "
-                           f"Описание: {note.description}")
-            if await send_message_aiogram(
-                bot,
-                settings.TELEGRAM_CHAT_ID,
-                message
-            ):
-                note.status = NotificationStatus.SUCCESSFULLY_SENT
+            message = f"Пора заняться заметкой: {note.name}"
+            if note.description:
+                message += f"\nОписание: {note.description}"
+
+            if await send_message_via_broker(note.id, message):
+
+                note.status = NotificationStatus.PROCESSING
                 note.reminder_at = None
                 note.remind_after_minutes = None
                 session.add(note)
@@ -95,6 +87,7 @@ async def check_and_notify(bot: Bot) -> None:
                 note.status = NotificationStatus.FAILED_TO_SEND
                 session.add(note)
         await session.commit()
+
 
 
 async def start_scheduler(bot: Bot, interval_seconds: int = 30) -> None:
@@ -110,10 +103,9 @@ async def bot_load() -> None:
     bot = Bot(token=settings.TELEGRAM_TOKEN)
 
     try:
-        await send_message_aiogram(
-            bot,
-            settings.TELEGRAM_CHAT_ID,
-            'Бот запущен и начал отслеживание таймеров заметок.'
+        await bot.send_message(
+            chat_id=settings.TELEGRAM_CHAT_ID ,
+            text='Бот запущен и начал отслеживание таймеров заметок.'
         )
     except Exception as error:
         logging.error(f'Не удалось отправить стартовое сообщение: {error}')

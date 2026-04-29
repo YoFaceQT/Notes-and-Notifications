@@ -17,6 +17,7 @@ class NotificationStatus(enum.Enum):
     IN_PROGRESS = 'IN_PROGRESS'
     FAILED_TO_SEND = 'FAILED_TO_SEND'
     SUCCESSFULLY_SENT = 'SUCCESSFULLY_SENT'
+    PROCESSING = 'PROCESSING'
 
 
 def utc_now() -> datetime:

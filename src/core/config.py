@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     DB_NAME: str
     TELEGRAM_CHAT_ID: int
     TELEGRAM_TOKEN: str
+    RABBITMQ_HOST: str
+    RABBITMQ_PORT: int
+    RABBITMQ_USER: str
+    RABBITMQ_PASS: str
 
     @property
     def DATABASE_URL(self) -> str:

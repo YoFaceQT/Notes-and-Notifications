@@ -69,7 +69,7 @@ TELEGRAM_CHAT_ID=!!!YOUR_TELEGRAM_CHAT_ID!!!
 docker-compose up --build
 ```
 
-Базовый URL FRONTEND: http://localhost:80
+Базовый URL FRONTEND: http://localhost:3000
 
 Базовый URL BACKEND: http://localhost:8000
 
