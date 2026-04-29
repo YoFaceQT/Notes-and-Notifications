@@ -104,14 +104,6 @@ async def start_scheduler(bot: Bot, interval_seconds: int = 30) -> None:
         await asyncio.sleep(interval_seconds)
 
 
-async def run_bot_polling(bot: Bot) -> None:
-    """Запускает асинхронный поллинг бота в отдельном потоке."""
-    try:
-        await dp.start_polling(bot)
-    except Exception as e:
-        logging.error(f"Ошибка в polling бота: {e}")
-
-
 async def bot_load() -> None:
     """Основная логика: запуск бота и фоновой проверки базы."""
     check_tokens()
