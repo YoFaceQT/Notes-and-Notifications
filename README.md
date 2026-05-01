@@ -1,11 +1,11 @@
 # Task Manager with Telegram Notifications
 
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![Pydantic](https://img.shields.io/badge/pydantic-%23E92063.svg?style=for-the-badge&logo=pydantic&logoColor=white) ![SQLAlchemy](https://img.shields.io/badge/sqlalchemy-%23D71F00.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white)  ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![Pydantic](https://img.shields.io/badge/pydantic-%23E92063.svg?style=for-the-badge&logo=pydantic&logoColor=white) ![SQLAlchemy](https://img.shields.io/badge/sqlalchemy-%23D71F00.svg?style=for-the-badge&logo=sqlalchemy&logoColor=white)  ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![RabbitMQ](https://img.shields.io/badge/Rabbitmq-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
 
 ## 🌟Что делает этот проект?
 > *Это умный менеджер задач, который сам напоминает о себе там, где вы точно не пропустите уведомление — в Telegram.*
 
-Вы просто создаёте задачу в браузере на Frontend, указываете, через сколько минут напомнить, и продолжаете заниматься своими делами. Бэкенд на FastAPI бережно хранит всё в PostgreSQL, а фоновый планировщик в нужный момент «стучится» в Telegram. 
+Заметка, созданная на фронтенде, попадает в FastAPI, сохраняется в PostgreSQL. По истечении таймера она не идёт прямиком в Telegram — сначала она попадает в очередь RabbitMQ. Брокер гарантирует, что уведомление будет доставлено боту, а тот уже отправит его вам. Всё асинхронно, надёжно, без блокировок.
 
 ## 🤖 Telegram уведомления
 Бот проверяет статусы задач и присылает уведомление в Telegram по окончанию действия таймера.
@@ -15,6 +15,7 @@
 ## 🚀 Стек технологий
 - **Python** - язык программирования
 - **FastAPI** — веб-фреймворк для API
+- **RabbitMQ** - брокер сообщений
 - **PostgreSQL** — основная база данных
 - **SQLAlchemy (ORM)** — работа с БД
 - **Pydantic** — валидация данных и схемы
@@ -24,6 +25,7 @@
 - **Uvicorn** — ASGI сервер
 - **React** - Frontend
 - **Asyncio** — фоновые задачи
+
 
 ## 🗄️ Структура проекта
 ```bash
@@ -40,8 +42,11 @@ src/
 │   └── bot_load.py        # логика бота и планировщик
 ├── core/
 │   └── database.py        # подключение к БД
+├── broker/
+│   └── broker.py          # RabbitMQ брокер сообщений
 └── main.py                # точка входа, lifespan
-/todo-app-frontend         # фронтэнд проекта
+todo-app-frontend/         # фронтэнд проекта
+tests/                     # тесты api ручек
 ```
 
 ## 📦 Установка и запуск
@@ -62,6 +67,10 @@ DB_NAME=postgres
 DB_PASS=postgres
 TELEGRAM_TOKEN=!!!YOUR_BOT_TELEGRAMM_TOKEN!!!
 TELEGRAM_CHAT_ID=!!!YOUR_TELEGRAM_CHAT_ID!!!
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASS=guest
 ```
 
 ### 3. Запусить Docker сбору
