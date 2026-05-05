@@ -19,7 +19,7 @@
 - **PostgreSQL** — основная база данных
 - **SQLAlchemy (ORM)** — работа с БД
 - **Pydantic** — валидация данных и схемы
-- **Docker** — контейнеризация Backend, Frontend, RabbitMQ, PostgreSQL
+- **Docker** — контейнеризация
 - **Telegram Bot API (pyTelegramBotAPI)** — отправка уведомлений
 - **Python-dotenv** — управление переменными окружения
 - **Uvicorn** — ASGI сервер
