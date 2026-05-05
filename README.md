@@ -20,7 +20,7 @@
 - **SQLAlchemy (ORM)** — работа с БД
 - **Pydantic** — валидация данных и схемы
 - **Docker** — контейнеризация
-- **Telegram Bot API (pyTelegramBotAPI)** — отправка уведомлений
+- **Aiogram** — асинхронная библиотека для разработки ботов Telegram API
 - **Python-dotenv** — управление переменными окружения
 - **Uvicorn** — ASGI сервер
 - **React** - Frontend
